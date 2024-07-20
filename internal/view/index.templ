@@ -1,0 +1,54 @@
+package view
+
+import "tobiasthedanish/code-stats/internal/viewmodel"
+
+templ Index(sessions viewmodel.CodingSessions) {
+	@base() {
+		<div class="relative flex h-40 w-full">
+			<canvas id="time-chart-container" data-chart={ templ.JSONString(sessions.TimeSpentData) }></canvas>
+			<canvas id="lang-chart-container" class="w-[300px]" data-chart={ templ.JSONString(sessions.LanguageData) }></canvas>
+		</div>
+		@chart()
+	}
+}
+
+templ chart() {
+	<script>
+
+	const defaultOptions = {
+		type: 'line',
+		options: {
+			elements: {
+				line: {
+					borderWidth: 3,
+					tension: 0.1
+				},
+				point: {
+					pointRadius: 4,
+					pointHitRadius: 4,
+				}
+			}
+		}
+	}
+
+	function createChart(ctx, data, options = defaultOptions, ) {
+		new Chart(ctx, {
+			...options,
+			data: {
+				labels: data.labels,
+				datasets: data.datasets,
+			},
+		});
+	}
+
+	const timeCtx = document.getElementById("time-chart-container")
+	let data = JSON.parse(timeCtx.getAttribute('data-chart'))
+	createChart(timeCtx, data)
+
+	const langCtx = document.getElementById("lang-chart-container")
+	data = JSON.parse(langCtx.getAttribute('data-chart'))
+	createChart(langCtx, data, {
+		type: 'pie'
+	})
+</script>
+}

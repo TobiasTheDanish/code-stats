@@ -3,6 +3,7 @@ module tobiasthedanish/code-stats
 go 1.22.4
 
 require (
+	github.com/a-h/templ v0.2.747
 	github.com/joho/godotenv v1.5.1
 	github.com/labstack/echo/v4 v4.12.0
 	go.mongodb.org/mongo-driver v1.16.0

@@ -6,11 +6,14 @@ all: build
 build:
 	@echo "Building..."
 	
-	
+	@templ generate
+	@npx tailwindcss -i ./globals.css -o ./assets/css/styles.css --minify 
 	@go build -o main cmd/api/main.go
 
 # Run the application
 run:
+	@templ generate
+	@npx tailwindcss -i ./globals.css -o ./assets/css/styles.css --minify 
 	@go run cmd/api/main.go
 
 # Create DB container
@@ -44,8 +47,10 @@ clean:
 # Live Reload
 watch:
 	@if command -v air > /dev/null; then \
-	    air; \
-	    echo "Watching...";\
+			echo "Watching...";\
+			templ generate -watch &\
+			npx tailwindcss -i ./globals.css -o ./assets/css/styles.css --watch &\
+			air;\
 	else \
 	    read -p "Go's 'air' is not installed on your machine. Do you want to install it? [Y/n] " choice; \
 	    if [ "$$choice" != "n" ] && [ "$$choice" != "N" ]; then \

@@ -1,0 +1,22 @@
+package view
+
+templ base() {
+	<!DOCTYPE html>
+	<html lang="en">
+		<head>
+			<title></title>
+			<meta charset="UTF-8"/>
+			<meta name="viewport" content="width=device-width, initial-scale=1"/>
+			<link href="assets/css/styles.css" rel="stylesheet"/>
+			<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+			<script>
+				if (typeof Colors != "undefined") {
+					Chart.register(Colors)
+				}
+			</script>
+		</head>
+		<body class="max-w-[1080px] h-screen m-auto">
+			{ children... }
+		</body>
+	</html>
+}

@@ -1,0 +1,10 @@
+package view
+
+templ Error(err error) {
+	@base() {
+		<h1>An unexpected error occured</h1>
+		<p>
+			Error message: { err.Error() }
+		</p>
+	}
+}

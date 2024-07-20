@@ -15,45 +15,14 @@ import (
 
 type Service interface {
 	Health() map[string]string
-	Daily() ([]CodingSession, error)
+	GetAllDaily() (*mongo.Cursor, error)
+	GetAllWeekly() (*mongo.Cursor, error)
+	GetAllMonthly() (*mongo.Cursor, error)
+	GetAllYearly() (*mongo.Cursor, error)
 }
 
 type service struct {
 	db *mongo.Client
-}
-
-// Period represents the time period for which the coding sessions have been aggregated.
-type Period int8
-
-const (
-	Day Period = iota
-	Week
-	Month
-	Year
-)
-
-// CodingSession represents a coding session that has been aggregated
-// for a given time period (day, week, month, year).
-type CodingSession struct {
-	ID           string       `bson:"_id,omitempty"`
-	Period       Period       `bson:"period"`
-	EpochDateMs  int64        `bson:"date"`
-	DateString   string       `bson:"date_string"`
-	TotalTimeMs  int64        `bson:"total_time_ms"`
-	Repositories []Repository `bson:"repositories"`
-}
-
-type Repository struct {
-	Name       string `bson:"name"`
-	Files      []File `bson:"files"`
-	DurationMs int64  `bson:"duration_ms"`
-}
-
-type File struct {
-	Name       string `bson:"name"`
-	Path       string `bson:"path"`
-	Filetype   string `bson:"filetype"`
-	DurationMs int64  `bson:"duration_ms"`
 }
 
 var (
@@ -86,27 +55,38 @@ func (s *service) Health() map[string]string {
 	}
 }
 
-func (s *service) Daily() ([]CodingSession, error) {
+func (s *service) GetAllDaily() (*mongo.Cursor, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
 	defer cancel()
 
 	collection := s.db.Database("pulse").Collection("daily")
 
-	data, err := collection.Find(ctx, bson.D{})
-	if err != nil {
-		return nil, err
-	}
+	return collection.Find(ctx, bson.D{})
+}
 
-	result := make([]CodingSession, 0, 0)
-	for data.Next(context.TODO()) {
-		var res CodingSession
-		err = data.Decode(&res)
-		if err != nil {
-			return nil, err
-		}
+func (s *service) GetAllWeekly() (*mongo.Cursor, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
 
-		result = append(result, res)
-	}
+	collection := s.db.Database("pulse").Collection("weekly")
 
-	return result, nil
+	return collection.Find(ctx, bson.D{})
+}
+
+func (s *service) GetAllMonthly() (*mongo.Cursor, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	collection := s.db.Database("pulse").Collection("monthly")
+
+	return collection.Find(ctx, bson.D{})
+}
+
+func (s *service) GetAllYearly() (*mongo.Cursor, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 1*time.Second)
+	defer cancel()
+
+	collection := s.db.Database("pulse").Collection("yearly")
+
+	return collection.Find(ctx, bson.D{})
 }
